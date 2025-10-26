@@ -1,4 +1,3 @@
-<!-- institucion/templates/usuarios/panel_admin.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,14 +16,27 @@
     <div class="container-fluid">
         <div class="panel-header">
             <h2 class="text-center">Panel de Administración</h2>
-            <img src="{% static 'images/logo_colegio.png' %}" alt="Logo del Colegio" class="img-fluid" style="max-width: 150px; display: block; margin: 0 auto;">
+            <img src="{% static 'images/logo_colegio.jpg' %}" alt="Logo del Colegio" class="img-fluid" style="max-width: 150px; display: block; margin: 0 auto;">
+            <div class="text-center mt-2">
+                <strong>Hola, {{ request.user.get_full_name|default:request.user.username }}</strong> | 
+                <a href="{% url 'logout' %}">Cerrar Sesión</a>
+            </div>
         </div>
         <div class="row mt-4">
             <div class="col-md-3">
                 <div class="card p-3 mb-3">
                     <h5>Gestión de Personal</h5>
                     <p>Registrar, actualizar y consultar datos de empleados (RF-017, RF-018, RF-019).</p>
+                    
+                    <a href="{% url 'registrar_personal' %}" class="btn btn-primary mt-2">
+                        Registrar Personal Nuevo
+                    </a>
+                    
+                    <a href="{% url 'consultar_personal' %}" class="btn btn-outline-secondary btn-sm mt-2">
+                        Consultar / Actualizar Lista
+                    </a>
                 </div>
+                
                 <div class="card p-3 mb-3">
                     <h5>Reportes Académicos</h5>
                     <p>Generar reportes de calificaciones y asistencia (RF-031).</p>
