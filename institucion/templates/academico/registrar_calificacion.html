@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registrar Calificación</title>
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    <style>
+        body { background-color: #f8f9fa; padding: 20px; }
+        .card { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registrar Calificación</h1>
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Estudiante</label>
+                        <select name="estudiante_id" class="form-select" required>
+                            {% for usuario in usuarios %}
+                                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Curso</label>
+                        <input type="text" name="curso" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nota</label>
+                        <input type="number" name="nota" class="form-control" step="0.1" min="0" max="10" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Período</label>
+                        <input type="text" name="periodo" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% bootstrap_javascript %}
+</body>
+</html>
