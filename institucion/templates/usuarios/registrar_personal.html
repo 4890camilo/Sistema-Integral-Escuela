@@ -13,85 +13,141 @@
             font-family: 'Arial', sans-serif;
         }
         .register-card {
-            background: #ffffff; padding: 1.5rem; border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 100%; max-width: 600px; 
+            background: #ffffff; padding: 2rem; border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 100%; max-width: 700px; /* Un poco más ancho */
         }
-        .form-label { font-weight: 500; color: #333; }
-        .form-control { border-radius: 8px; border-color: #ced4da; padding: 0.5rem 0.75rem; font-size: 0.9rem; height: auto; }
-        .form-control:focus { border-color: #007bff; box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); }
-        .btn-primary { background-color: #007bff; border-color: #007bff; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.95rem; }
+        .form-label { font-weight: 500; color: #333; margin-bottom: 0.25rem; }
+        /* Aplicamos estilos consistentes a inputs y selects */
+        .form-control, .form-select {
+            border-radius: 8px; border-color: #ced4da; padding: 0.6rem 0.9rem;
+            font-size: 0.95rem; height: auto; margin-bottom: 0.5rem; /* Espacio debajo */
+        }
+        .form-control:focus, .form-select:focus { border-color: #007bff; box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); }
+        .btn-primary { background-color: #007bff; border-color: #007bff; border-radius: 8px; padding: 0.6rem 1.2rem; font-size: 1rem; }
         .btn-primary:hover { background-color: #0056b3; border-color: #0056b3; }
+        .text-danger { font-size: 0.875em; }
+        /* Ocultamos el div del curso inicialmente */
+        .curso-field-container { display: none; }
     </style>
 </head>
 <body>
     <div class="register-card">
-        <h2 class="text-center mb-3" style="color: #333;">Registrar Nuevo Personal</h2>
-        
+        <h2 class="text-center mb-4" style="color: #333;">Registrar Nuevo Personal</h2>
+
         <form method="post">
             {% csrf_token %}
             {% if form.errors %}
                 <div class="alert alert-danger" role="alert">
                     Por favor, corrige los errores a continuación.
+                    {# Mostramos errores específicos si los hay #}
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <div><strong>{{ field|capfirst }}:</strong> {{ error }}</div>
+                        {% endfor %}
+                    {% endfor %}
                 </div>
             {% endif %}
 
-            <div class="mb-3">
-                <label for="id_username" class="form-label">Usuario</label>
-                <input type="text" name="username" class="form-control" value="{{ form.username.value|default:'' }}" {% if form.username.errors %}aria-invalid="true"{% endif %}>
-                {% for error in form.username.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
-            </div>
-            <div class="mb-3">
-                <label for="id_password" class="form-label">Contraseña</label>
-                <input type="password" name="password" class="form-control" {% if form.password.errors %}aria-invalid="true"{% endif %}>
-                {% for error in form.password.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
-            </div>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="id_first_name" class="form-label">Nombres</label>
-                    <input type="text" name="first_name" class="form-control" value="{{ form.first_name.value|default:'' }}" {% if form.first_name.errors %}aria-invalid="true"{% endif %}>
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Usuario</label>
+                    {{ form.username }} {# Renderiza <input class="form-control"> #}
+                    {% for error in form.username.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Contraseña</label>
+                    {{ form.password }} {# Renderiza <input class="form-control" type="password"> #}
+                    {% for error in form.password.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">Nombres</label>
+                    {{ form.first_name }}
                     {% for error in form.first_name.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="id_last_name" class="form-label">Apellidos</label>
-                    <input type="text" name="last_name" class="form-control" value="{{ form.last_name.value|default:'' }}" {% if form.last_name.errors %}aria-invalid="true"{% endif %}>
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Apellidos</label>
+                    {{ form.last_name }}
                     {% for error in form.last_name.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
                 </div>
             </div>
+
             <div class="mb-3">
-                <label for="id_rol" class="form-label">Rol</label>
-                <select name="rol" class="form-control" {% if form.rol.errors %}aria-invalid="true"{% endif %}>
-                    {% for value, label in form.rol.field.choices %}
-                        <option value="{{ value }}" {% if form.rol.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
+                <label for="{{ form.rol.id_for_label }}" class="form-label">Rol</label>
+                {{ form.rol }} {# Renderiza <select class="form-select"> #}
                 {% for error in form.rol.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
             </div>
+
+            {# Este es el contenedor del campo Curso #}
+            <div class="mb-3 curso-field-container" id="curso-field-container">
+                <label for="{{ form.curso.id_for_label }}" class="form-label">Curso Asignado (Solo Estudiantes)</label>
+                {{ form.curso }} {# Renderiza <select class="form-select"> #}
+                {% for error in form.curso.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
+            </div>
+
             <div class="mb-3">
-                <label for="id_email" class="form-label">Correo Electrónico (Institucional)</label>
-                <input type="email" name="email" class="form-control" value="{{ form.email.value|default:'' }}" {% if form.email.errors %}aria-invalid="true"{% endif %}>
+                <label for="{{ form.email.id_for_label }}" class="form-label">Correo Electrónico (Institucional)</label>
+                {{ form.email }}
                 {% for error in form.email.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
             </div>
+
             <div class="mb-3">
-                <label for="id_correo" class="form-label">Correo (Personal/Contacto)</label>
-                <input type="email" name="correo" class="form-control" value="{{ form.correo.value|default:'' }}" {% if form.correo.errors %}aria-invalid="true"{% endif %}>
+                <label for="{{ form.correo.id_for_label }}" class="form-label">Correo (Personal/Contacto)</label>
+                {{ form.correo }}
                 {% for error in form.correo.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
             </div>
+
             <div class="mb-3">
-                <label for="id_telefono" class="form-label">Teléfono</label>
-                <input type="text" name="telefono" class="form-control" value="{{ form.telefono.value|default:'' }}" {% if form.telefono.errors %}aria-invalid="true"{% endif %}>
+                <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                {{ form.telefono }}
                 {% for error in form.telefono.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
             </div>
+
             <div class="mb-3">
-                <label for="id_direccion" class="form-label">Dirección</label>
-                <input type="text" name="direccion" class="form-control" value="{{ form.direccion.value|default:'' }}" {% if form.direccion.errors %}aria-invalid="true"{% endif %}>
+                <label for="{{ form.direccion.id_for_label }}" class="form-label">Dirección</label>
+                {# Renderiza <textarea class="form-control" rows="3"> #}
+                {{ form.direccion }}
                 {% for error in form.direccion.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
             </div>
+
             <button type="submit" class="btn btn-primary w-100 mb-3">Guardar Personal</button>
         </form>
+
         <p class="text-center text-muted">
             <a href="{% url 'dashboard' %}" class="text-decoration-none text-primary">Cancelar y Volver al Panel</a>
         </p>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdl" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Usamos los IDs que Django genera automáticamente para los campos
+            const rolSelect = document.getElementById('id_rol');
+            const cursoContainer = document.getElementById('curso-field-container');
+            const cursoSelect = document.getElementById('id_curso'); // El select del curso
+
+            function toggleCursoField() {
+                // Comparamos con el valor 'ESTUDIANTE' definido en tu modelo
+                if (rolSelect.value === 'ESTUDIANTE') {
+                    cursoContainer.style.display = 'block'; // Mostramos el contenedor
+                } else {
+                    cursoContainer.style.display = 'none'; // Ocultamos el contenedor
+                    cursoSelect.value = ''; // Limpiamos la selección del curso si se oculta
+                }
+            }
+
+            // Ejecutar al cargar la página por si el formulario viene con errores
+            if (rolSelect) { // Asegurarnos que el elemento exista
+                 toggleCursoField();
+                 // Añadir el listener para cuando cambie el rol
+                 rolSelect.addEventListener('change', toggleCursoField);
+            } else {
+                console.error("El elemento select con id 'id_rol' no fue encontrado.");
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

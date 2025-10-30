@@ -1,4 +1,3 @@
-<!-- institucion/templates/usuarios/panel_estudiante.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,6 +10,12 @@
         body { background-color: #f0f2f5; font-family: 'Arial', sans-serif; }
         .panel-header { background-color: #ffffff; padding: 1rem; border-bottom: 1px solid #dee2e6; }
         .card { border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        .card-link { text-decoration: none; color: inherit; }
+        .card-link .card:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
     </style>
 </head>
 <body>
@@ -18,28 +23,45 @@
         <div class="panel-header">
             <h2 class="text-center">Panel del Estudiante</h2>
             <img src="{% static 'images/logo_colegio.jpg' %}" alt="Logo del Colegio" class="img-fluid" style="max-width: 150px; display: block; margin: 0 auto;">
+            <div class="text-center mt-2">
+                <strong>Hola, {{ user.get_full_name|default:user.username }}</strong> | 
+                <a href="{% url 'logout' %}">Cerrar Sesión</a>
+            </div>
         </div>
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card p-3 mb-3">
-                    <h5>Consultar Calificaciones</h5>
-                    <p>Revisa tus calificaciones (RF-003).</p>
+        
+        <div class="container mt-4"> 
+            <div class="row mt-4 justify-content-center">
+                
+                <div class="col-md-4">
+                    <a href="{% url 'academico:ver_calificaciones' %}" class="card-link">
+                        <div class="card p-3 mb-3 text-center">
+                            <h5 class="card-title">Consultar Calificaciones</h5>
+                            <p class="card-text">Revisa tus calificaciones (RF-003).</p>
+                        </div>
+                    </a>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3 mb-3">
-                    <h5>Consultar Asistencia</h5>
-                    <p>Revisa tu asistencia (RF-006).</p>
+                
+                <div class="col-md-4">
+                    <a href="{% url 'academico:ver_asistencia' %}" class="card-link">
+                        <div class="card p-3 mb-3 text-center">
+                            <h5 class="card-title">Consultar Asistencia</h5>
+                            <p class="card-text">Revisa tu asistencia (RF-006).</p>
+                        </div>
+                    </a>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3 mb-3">
-                    <h5>Material Didáctico</h5>
-                    <p>Accede a materiales (RF-009).</p>
+                
+                <div class="col-md-4">
+                    <a href="{% url 'academico:ver_material' %}" class="card-link">
+                        <div class="card p-3 mb-3 text-center">
+                            <h5 class="card-title">Material Didáctico</h5>
+                            <p class="card-text">Accede a materiales (RF-009).</p>
+                        </div>
+                     </a>
                 </div>
+                
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdl" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

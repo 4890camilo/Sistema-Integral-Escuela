@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestionar Asignaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; padding-top: 2rem; padding-bottom: 2rem; }
+        .card { border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .table th { background-color: #343a40; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0">Gestionar Asignaciones Docentes</h4>
+            </div>
+            <div class="card-body">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <p class="text-muted">Aquí puedes ver y crear las asignaciones de materias y cursos para cada docente.</p>
+
+                <a href="{% url 'academico:crear_asignacion' %}" class="btn btn-primary mb-3">
+                    + Crear Nueva Asignación
+                </a>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Docente</th>
+                                <th>Materia</th>
+                                <th>Curso</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for asignacion in asignaciones %}
+                            <tr>
+                                <td>{{ asignacion.docente.get_full_name }} ({{ asignacion.docente.username }})</td>
+                                <td>{{ asignacion.materia }}</td>
+                                <td>{{ asignacion.curso }}</td>
+                                <td>
+                                    -
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No hay asignaciones creadas todavía.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Volver al Panel Admin</a>
+            </div>
+        </div>
+    </div>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

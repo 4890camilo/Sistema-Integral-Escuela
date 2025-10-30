@@ -1,34 +1,52 @@
-from django.contrib.auth.models import AbstractUser
+# institucion/usuarios/models.py
 from django.db import models
-from django.core.validators import EmailValidator
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 
 class Usuario(AbstractUser):
-    ROLES = (
-        ('ADMINISTRATIVO', 'Administrativo'),
-        ('DOCENTE', 'Docente'),
-        ('ESTUDIANTE', 'Estudiante'),
-        ('PADRES', 'Padres'),
-    )
-    
-    rol = models.CharField(max_length=20, choices=ROLES, default='ESTUDIANTE')
-    telefono = models.CharField(max_length=15, blank=True, null=True, help_text="Número de teléfono (requerido para Padres)")
-    correo = models.EmailField(max_length=254, blank=True, null=True, validators=[EmailValidator()], help_text="Correo electrónico (requerido para Padres)")
+    # Definimos los roles
+    ADMINISTRATIVO = 'ADMINISTRATIVO'
+    DOCENTE = 'DOCENTE'
+    ESTUDIANTE = 'ESTUDIANTE'
+    PADRES = 'PADRES'
+    ROLES = [
+        (ADMINISTRATIVO, 'Administrativo'),
+        (DOCENTE, 'Docente'),
+        (ESTUDIANTE, 'Estudiante'),
+        (PADRES, 'Padres'),
+    ]
+
+    # --- Tus campos personalizados ---
+    rol = models.CharField(max_length=20, choices=ROLES, default=ESTUDIANTE)
+    telefono = models.CharField(max_length=15, blank=True, null=True)
+    correo = models.EmailField(blank=True, null=True)
     direccion = models.TextField(blank=True, null=True)
 
+    # --- ¡CAMPO REACTIVADO! ---
+    # Ahora que las tablas base existen, volvemos a activar este campo.
+    
+    curso = models.ForeignKey(
+        "academico.Curso",  # Usamos comillas para evitar errores
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='estudiantes' 
+    )
+
+    # Campos de autenticación de Django (con related_name)
     groups = models.ManyToManyField(
         'auth.Group',
-        related_name='usuarios_groups',
+        related_name='usuarios_groups', # Nombre único
         blank=True,
-        help_text='The groups this user belongs to.',
-        related_query_name='user',
+        help_text='Los grupos a los que pertenece este usuario.',
+        verbose_name='grupos'
     )
     user_permissions = models.ManyToManyField(
         'auth.Permission',
-        related_name='usuarios_permissions',
+        related_name='usuarios_permissions', # Nombre único
         blank=True,
-        help_text='Specific permissions for this user.',
-        related_query_name='user',
+        help_text='Permisos específicos para este usuario.',
+        verbose_name='permisos de usuario'
     )
 
     class Meta:
@@ -40,11 +58,9 @@ class Usuario(AbstractUser):
         return self.username
 
     def get_rol_display(self):
-        return dict(self.ROLES).get(self.rol, 'Desconocido')
+        return dict(self.ROLES).get(self.rol)
 
     def clean(self):
-        if self.rol == 'PADRES':
-            if not self.telefono:
-                raise ValidationError({'telefono': 'El teléfono es requerido para Padres.'})
-            if not self.correo:
-                raise ValidationError({'correo': 'El correo es requerido para Padres.'})
+        super().clean()
+        if self.rol == self.PADRES and (not self.telefono or not self.correo):
+            raise ValidationError('Los padres deben tener un teléfono y un correo de contacto.')

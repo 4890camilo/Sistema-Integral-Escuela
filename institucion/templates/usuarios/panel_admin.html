@@ -16,40 +16,50 @@
     <div class="container-fluid">
         <div class="panel-header">
             <h2 class="text-center">Panel de Administración</h2>
+            {# Asegúrate de que la ruta a tu logo sea correcta en static/images/ #}
             <img src="{% static 'images/logo_colegio.jpg' %}" alt="Logo del Colegio" class="img-fluid" style="max-width: 150px; display: block; margin: 0 auto;">
             <div class="text-center mt-2">
-                <strong>Hola, {{ request.user.get_full_name|default:request.user.username }}</strong> | 
+                <strong>Hola, {{ request.user.get_full_name|default:request.user.username }}</strong> |
                 <a href="{% url 'logout' %}">Cerrar Sesión</a>
             </div>
         </div>
         <div class="row mt-4">
             <div class="col-md-3">
+                {# Card para gestionar usuarios (Personal) #}
                 <div class="card p-3 mb-3">
                     <h5>Gestión de Personal</h5>
-                    <p>Registrar, actualizar y consultar datos de empleados (RF-017, RF-018, RF-019).</p>
-                    
-                    <a href="{% url 'registrar_personal' %}" class="btn btn-primary mt-2">
-                        Registrar Personal Nuevo
-                    </a>
-                    
-                    <a href="{% url 'consultar_personal' %}" class="btn btn-outline-secondary btn-sm mt-2">
-                        Consultar / Actualizar Lista
-                    </a>
+                    <p>Registrar, actualizar y consultar usuarios (Estudiantes, Docentes, etc.).</p>
+                    <a href="{% url 'registrar_personal' %}" class="btn btn-primary mt-2">Registrar Nuevo</a>
+                    <a href="{% url 'consultar_personal' %}" class="btn btn-outline-secondary btn-sm mt-2">Consultar / Actualizar</a>
                 </div>
-                
+
+                {# Card para ASIGNACIONES #}
+                <div class="card p-3 mb-3">
+                    <h5>Gestión Académica</h5>
+                    <p>Asignar materias y cursos a los docentes.</p>
+                    {# --- ¡VERIFICA ESTE ENLACE! --- #}
+                    {# Debe usar 'academico:listar_asignaciones' #}
+                    <a href="{% url 'academico:listar_asignaciones' %}" class="btn btn-info mt-2">
+                        Gestionar Asignaciones
+                    </a>
+                    {# --- FIN DE LA VERIFICACIÓN --- #}
+                </div>
+
+                {# Card para reportes (sin funcionalidad por ahora) #}
                 <div class="card p-3 mb-3">
                     <h5>Reportes Académicos</h5>
-                    <p>Generar reportes de calificaciones y asistencia (RF-031).</p>
+                    <p>Generar reportes (en construcción).</p>
                 </div>
             </div>
             <div class="col-md-9">
+                 {# Card para informes (sin funcionalidad por ahora) #}
                 <div class="card p-3">
                     <h5>Informes y Indicadores</h5>
-                    <p>Generar informes de gestión y consolidar indicadores (RF-032, RF-033, RF-034).</p>
+                    <p>Generar informes de gestión y consolidar indicadores (en construcción).</p>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdl" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
